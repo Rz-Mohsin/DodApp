@@ -22,6 +22,8 @@ class PinView (context: Context?, attr: AttributeSet? = null) :
         var pinID = 1
     }
 
+    //changing github account
+
     init {
         initialise()
         gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
