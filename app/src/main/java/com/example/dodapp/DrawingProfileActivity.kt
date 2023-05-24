@@ -1,8 +1,10 @@
 package com.example.dodapp
 
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.example.dodapp.databinding.ActivityDrawingProfileBinding
 import com.example.dodapp.databinding.MarkerBottomSheetLayoutBinding
@@ -13,6 +15,12 @@ class DrawingProfileActivity : AppCompatActivity(){
     private val TAG = "error001"
 
     private lateinit var binding : ActivityDrawingProfileBinding
+    private val imageChooserLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { imageUri: Uri? ->
+        // Set the selected image to the ImageView using the imageUri
+        imageUri?.let {
+            binding.imageView.setImage(ImageSource.uri(imageUri))
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,7 +28,7 @@ class DrawingProfileActivity : AppCompatActivity(){
         binding = ActivityDrawingProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.imageView.setImage(ImageSource.resource(R.drawable.ic_drawing_1))
+        //binding.imageView.setImage(ImageSource.resource(R.drawable.ic_drawing_1))
         binding.imageView.isZoomEnabled = true
         binding.imageView.setPinClickListener(object : PinView.PinClickListener {
             override fun onPinClick(pinName: String) {
@@ -29,6 +37,10 @@ class DrawingProfileActivity : AppCompatActivity(){
                 showBottomSheet()
             }
         })
+
+        binding.btnChooseDrawing.setOnClickListener {
+            imageChooserLauncher.launch("image/*")
+        }
     }
 
     private fun showBottomSheet(){

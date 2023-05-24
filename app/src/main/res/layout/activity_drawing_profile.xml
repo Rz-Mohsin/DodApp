@@ -10,15 +10,36 @@
 
         <com.example.dodapp.PinView
             android:id="@+id/imageView"
-            android:layout_width="350dp"
+            android:layout_width="300dp"
             android:layout_height="600dp"
             android:longClickable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/bg_drawing"
+            app:layout_constraintBottom_toTopOf="@+id/btnChooseDrawing"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
         </com.example.dodapp.PinView>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnChooseDrawing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Choose Drawing"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnSaveDrawing"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSaveDrawing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Save Drawing"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btnChooseDrawing"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
