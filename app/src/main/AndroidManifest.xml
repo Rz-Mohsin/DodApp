@@ -13,11 +13,12 @@
         android:theme="@style/Theme.DodApp"
         tools:targetApi="31">
         <activity
-            android:name=".DrawingProfileActivity"
+            android:name=".ui.activities.DrawingProfileFragment"
             android:exported="true">
         </activity>
 
-        <activity android:name=".DrawingListActivity"
+        <activity android:name=".ui.activities.DrawingListActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="true">
 
             <intent-filter>

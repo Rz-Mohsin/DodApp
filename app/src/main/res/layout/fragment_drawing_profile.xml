@@ -6,28 +6,40 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".DrawingProfileActivity">
+        android:background="@color/white"
+        tools:context=".ui.activities.DrawingProfileFragment">
 
-        <com.example.dodapp.PinView
+        <EditText
+            android:id="@+id/etDrawingName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:hint="Drawing Name"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/imageView"/>
+
+        <com.example.dodapp.ui.MarkerView
             android:id="@+id/imageView"
             android:layout_width="300dp"
-            android:layout_height="600dp"
+            android:layout_height="500dp"
             android:longClickable="true"
             android:background="@drawable/bg_drawing"
             app:layout_constraintBottom_toTopOf="@+id/btnChooseDrawing"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-        </com.example.dodapp.PinView>
+            app:layout_constraintTop_toBottomOf="@+id/etDrawingName">
+        </com.example.dodapp.ui.MarkerView>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnChooseDrawing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:text="Choose Drawing"
+            app:layout_constraintTop_toBottomOf="@+id/imageView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnSaveDrawing"/>
 
@@ -35,10 +47,10 @@
             android:id="@+id/btnSaveDrawing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:text="Save Drawing"
+            app:layout_constraintTop_toTopOf="@+id/btnChooseDrawing"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/btnChooseDrawing"
             app:layout_constraintStart_toEndOf="@+id/btnChooseDrawing"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

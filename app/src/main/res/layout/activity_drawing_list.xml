@@ -10,6 +10,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/btnAddDrawing"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_margin="16dp"
+            android:gravity="center"
+            android:text="+"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:background="@drawable/bg_circular_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+        </androidx.appcompat.widget.AppCompatTextView>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvDrawing"
             android:layout_width="match_parent"
@@ -21,16 +35,14 @@
             app:layout_constraintBottom_toBottomOf="parent">
         </androidx.recyclerview.widget.RecyclerView>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnAddDrawing"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_margin="16dp"
-            android:text="+"
-            android:textSize="28sp"
-            android:background="@drawable/bg_circular_button"
+        <FrameLayout
+            android:id="@+id/fragmentContainer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

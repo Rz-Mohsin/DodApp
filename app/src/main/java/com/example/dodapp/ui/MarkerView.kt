@@ -1,4 +1,4 @@
-package com.example.dodapp
+package com.example.dodapp.ui
 
 import android.content.Context
 import android.graphics.*
@@ -9,33 +9,36 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import androidx.core.content.ContextCompat
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnStateChangedListener
+import com.example.dodapp.R
 import java.util.ArrayList
 
-class PinView (context: Context?, attr: AttributeSet? = null) :
+class MarkerView (context: Context?, attr: AttributeSet? = null) :
     SubsamplingScaleImageView(context, attr),OnStateChangedListener {
-    private val sPin = ArrayList<PointF>()
-    private val pinNames = ArrayList<String>()
-    private var pin: Bitmap? = null
+    private val sMarker = ArrayList<PointF>()
+    private val markerIDs = ArrayList<String>()
+    private var marker: Bitmap? = null
     private var gestureDetector: GestureDetector? = null
-    private var pinClickListener: PinClickListener? = null
+    private var markerClickListener: MarkerClickListener? = null
     private val clickBounds = ArrayList<RectF>()
 
     companion object {
-        var pinID = 1
+        var markerID = 1
     }
 
     init {
+        Log.d("MarkerViewClass","Object of Marker View CLass created")
         initialise()
         gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
             override fun onDoubleTap(e: MotionEvent): Boolean {
-                Log.d("error001","double tap success")
-                val point = viewToSourceCoord(PointF(e.x, e.y))
-                point?.let {
-                    val pinName = pinID++.toString()
-                    setPin(it, pinName)
-                    pinClickListener?.onPinClick(pinName)
-                }
-                invalidate()
+//                val point = viewToSourceCoord(PointF(e.x, e.y))
+//                point?.let {
+//                    val markerID = markerID++.toString()
+//                    //setMarker(it, markerID)
+//                    markerClickListener?.onDoubleTap(markerID, e.x, e.y)
+//                    //store in database
+//                }
+//                invalidate()
+                markerClickListener?.onDoubleTap(markerID++.toString(), e.x, e.y)
                 return true
             }
         })
@@ -56,7 +59,8 @@ class PinView (context: Context?, attr: AttributeSet? = null) :
             for (i in clickBounds.indices) {
                 val bounds = clickBounds[i]
                 if (bounds.contains(x, y)) {
-                    pinClickListener?.onPinClick(pinNames[i])
+                    markerClickListener?.onMarkerClick(markerIDs[i])
+                    //fetch marker detail from database 
                     performClick()
                     return true
                 }
@@ -65,30 +69,30 @@ class PinView (context: Context?, attr: AttributeSet? = null) :
         return handled || super.onTouchEvent(event)
     }
 
-    fun setPinClickListener(listener: PinClickListener) {
-        this.pinClickListener = listener
+    fun setMarkerClickListener(listener: MarkerClickListener) {
+        this.markerClickListener = listener
     }
 
-    fun setPin(sPin: PointF, name: String): Boolean {
-        return if (pinNames.contains(name)) {
+    fun setMarker(sMarker: PointF, name: String): Boolean {
+        return if (markerIDs.contains(name)) {
             false
         } else {
-            this.sPin.add(sPin)
-            pinNames.add(name)
+            this.sMarker.add(sMarker)
+            markerIDs.add(name)
             initialise()
             invalidate()
             true
         }
     }
 
-    fun getPin(name: String): PointF {
-        return sPin[pinNames.indexOf(name)]
+    fun getMarker(name: String): PointF {
+        return sMarker[markerIDs.indexOf(name)]
     }
 
-    fun removePin(name: String): Boolean {
-        return if (pinNames.contains(name)) {
-            sPin.removeAt(pinNames.indexOf(name))
-            pinNames.remove(name)
+    fun removeMarker(name: String): Boolean {
+        return if (markerIDs.contains(name)) {
+            sMarker.removeAt(markerIDs.indexOf(name))
+            markerIDs.remove(name)
             true
         } else {
             false
@@ -97,7 +101,7 @@ class PinView (context: Context?, attr: AttributeSet? = null) :
 
     private fun initialise() {
         val density = resources.displayMetrics.densityDpi.toFloat()
-        val markerDrawable = ContextCompat.getDrawable(context, R.drawable.ic_marker)
+        val markerDrawable = ContextCompat.getDrawable(context, R.drawable.ic_marker_red)
         val markerBitmap = Bitmap.createBitmap(
             markerDrawable!!.intrinsicWidth,
             markerDrawable.intrinsicHeight,
@@ -110,7 +114,7 @@ class PinView (context: Context?, attr: AttributeSet? = null) :
         markerBitmap?.let{
             val w = density / 420f * it.width
             val h = density / 420f * it.height
-            pin = Bitmap.createScaledBitmap(it, w.toInt(), h.toInt(), true)
+            marker = Bitmap.createScaledBitmap(it, w.toInt(), h.toInt(), true)
         }
 
         updateBounds()
@@ -124,18 +128,19 @@ class PinView (context: Context?, attr: AttributeSet? = null) :
         }
         val paint = Paint()
         paint.isAntiAlias = true
-        for (point in sPin) {
-            if (point != null && pin != null) {
-                val vPin = sourceToViewCoord(point)
-                val vX = vPin!!.x - pin!!.width / 2
-                val vY = vPin.y - pin!!.height
-                canvas.drawBitmap(pin!!, vX, vY, paint)
+        for (point in sMarker) {
+            if (point != null && marker != null) {
+                val vMarker = sourceToViewCoord(point)
+                val vX = vMarker!!.x - marker!!.width / 2
+                val vY = vMarker.y - marker!!.height
+                canvas.drawBitmap(marker!!, vX, vY, paint)
             }
         }
     }
 
-    interface PinClickListener {
-        fun onPinClick(pinName: String)
+    interface MarkerClickListener {
+        fun onMarkerClick(markerID: String)
+        fun onDoubleTap(markerID : String, x : Float, y : Float)
     }
 
     override fun onScaleChanged(newScale: Float, origin: Int) {
@@ -149,18 +154,18 @@ class PinView (context: Context?, attr: AttributeSet? = null) :
 
     private fun updateBounds(){
         clickBounds.clear()
-        for (point in sPin) {
+        for (point in sMarker) {
             if (point != null) {
-                val vPin = sourceToViewCoord(point)
-                val vX = vPin?.x ?: continue
-                val vY = vPin.y
+                val vMarker = sourceToViewCoord(point)
+                val vX = vMarker?.x ?: continue
+                val vY = vMarker.y
 
                 val currentScale = scale
 
                 val bounds = RectF(
-                    vX - pin!!.width / 2 * currentScale,
-                    vY - pin!!.height,
-                    vX + pin!!.width / 2 * currentScale,
+                    vX - marker!!.width / 2 * currentScale,
+                    vY - marker!!.height,
+                    vX + marker!!.width / 2 * currentScale,
                     vY
                 )
                 clickBounds.add(bounds)
