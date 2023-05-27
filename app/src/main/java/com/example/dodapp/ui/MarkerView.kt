@@ -19,11 +19,7 @@ class MarkerView (context: Context?, attr: AttributeSet? = null) :
     private var marker: Bitmap? = null
     private var gestureDetector: GestureDetector? = null
     private var markerClickListener: MarkerClickListener? = null
-    private val clickBounds = ArrayList<RectF>()
-
-    companion object {
-        var markerID = 1
-    }
+    val clickBounds = ArrayList<RectF>()
 
     init {
         Log.d("MarkerViewClass","Object of Marker View CLass created")
@@ -38,7 +34,13 @@ class MarkerView (context: Context?, attr: AttributeSet? = null) :
 //                    //store in database
 //                }
 //                invalidate()
-                markerClickListener?.onDoubleTap(markerID++.toString(), e.x, e.y)
+                var id = 0
+                if(markerIDs.isEmpty()){
+                    id = 1
+                } else {
+                    id = markerIDs.last().toInt() + 1
+                }
+                markerClickListener?.onDoubleTap(id.toString(), e.x, e.y)
                 return true
             }
         })
@@ -53,12 +55,13 @@ class MarkerView (context: Context?, attr: AttributeSet? = null) :
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val handled = gestureDetector?.onTouchEvent(event) ?: false
         if (!handled && event.action == MotionEvent.ACTION_DOWN) {
-            Log.d("error001","Single tap success")
+            Log.d("error001","Single tap success, size of click bounds : ${clickBounds.size}")
             val x = event.x
             val y = event.y
             for (i in clickBounds.indices) {
                 val bounds = clickBounds[i]
                 if (bounds.contains(x, y)) {
+                    Log.d("error001","index in click bounds : $i")
                     markerClickListener?.onMarkerClick(markerIDs[i])
                     //fetch marker detail from database 
                     performClick()

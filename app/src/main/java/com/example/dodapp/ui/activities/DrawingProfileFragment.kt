@@ -16,19 +16,25 @@ import com.example.dodapp.models.Marker
 import com.example.dodapp.ui.DrawingViewModel
 import com.example.dodapp.ui.MarkerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import java.io.InputStream
 
 class DrawingProfileFragment : Fragment(){
 
     private lateinit var binding : FragmentDrawingProfileBinding
     private lateinit var viewModel: DrawingViewModel
     lateinit var bottomSheetBinding : MarkerBottomSheetLayoutBinding
-    private var chosenDrawing : String? = null
+    private var chosenDrawing : Uri? = null
     private val markersList = ArrayList<Marker>()
 
     private val imageChooserLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { imageUri: Uri? ->
         imageUri?.let {
-            binding.imageView.setImage(ImageSource.uri(it))
-            chosenDrawing = it.toString()
+            binding.apply {
+                imageView.setImage(ImageSource.uri(it))
+                btnChooseDrawing.isClickable = false
+                btnChooseDrawing.alpha = 0.2F
+            }
+
+            chosenDrawing = it
         }
     }
 
@@ -48,8 +54,6 @@ class DrawingProfileFragment : Fragment(){
         binding.imageView.isZoomEnabled = true
         binding.imageView.setMarkerClickListener(object : MarkerView.MarkerClickListener {
             override fun onMarkerClick(markerID: String) {
-                Log.d("Marker Click", "Marker $markerID clicked")
-                //showMarkerDetail() from database 
             }
 
             override fun onDoubleTap(markerID : String, x : Float, y : Float) {
@@ -62,20 +66,23 @@ class DrawingProfileFragment : Fragment(){
         }
 
         binding.btnSaveDrawing.setOnClickListener {
-            val drawingName = binding.etDrawingName.toString()
-            if (chosenDrawing.isNullOrEmpty()){
-                Toast.makeText(requireContext(),"Failed to save drawing", Toast.LENGTH_SHORT).show()
+            val drawingName = binding.etDrawingName.text.toString()
+            if ((chosenDrawing == null) || drawingName == ""){
+                Toast.makeText(requireContext(),"Failed to save drawing : Add name and image", Toast.LENGTH_SHORT).show()
             } else {
+                val inputStream: InputStream? = requireActivity().contentResolver.openInputStream(chosenDrawing!!) // Provide the URI of the image
+                val imageBytes: ByteArray? = inputStream?.buffered()?.use { it.readBytes() }
                 viewModel.saveDrawing(
                     Drawing(
                         null,
                         drawingName,
                         System.currentTimeMillis(),
-                        chosenDrawing!!,
+                        imageBytes!!,
                         markersList
                     )
                 )
                 Toast.makeText(requireContext(),"Drawing Saved", Toast.LENGTH_SHORT).show()
+                requireActivity().supportFragmentManager.popBackStack()
             }
         }
     }
@@ -111,8 +118,8 @@ class DrawingProfileFragment : Fragment(){
     }
 
     private fun saveMarker(markerID : String, x : Float, y : Float) {
-        val markerTitle = bottomSheetBinding.tvMarkerTitle.toString()
-        val markerDes = bottomSheetBinding.tvMarkerDes.toString()
+        val markerTitle = bottomSheetBinding.tvMarkerTitle.text.toString()
+        val markerDes = bottomSheetBinding.tvMarkerDes.text.toString()
         if(markerTitle.isNotEmpty() && markerDes.isNotEmpty()){
             markersList.add(Marker(
                 markerID,
@@ -122,7 +129,7 @@ class DrawingProfileFragment : Fragment(){
                 markerDes,
                 System.currentTimeMillis()
                 ))
-
+            Toast.makeText(requireContext(),"Marker added!",Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(requireContext(),"Marker title and description can't be empty!",Toast.LENGTH_SHORT).show()
         }

@@ -14,7 +14,7 @@ data class Drawing(
     var id : Int? = null,
     val name : String,
     val creationTime : Long,
-    val uriToDrawing : String,
+    val imageBytes : ByteArray,
     @TypeConverters(MarkerConverter::class)
-    val markers : MutableList<Marker>
+    var markers : MutableList<Marker>
 ) : Serializable

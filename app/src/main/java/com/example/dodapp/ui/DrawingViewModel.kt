@@ -19,4 +19,9 @@ class DrawingViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             repository.upsert(drawing)
         }
+
+    fun updateDrawing(drawing: Drawing) =
+        CoroutineScope(Dispatchers.IO).launch {
+            repository.update(drawing)
+        }
 }

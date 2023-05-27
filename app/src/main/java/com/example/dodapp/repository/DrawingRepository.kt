@@ -12,4 +12,8 @@ class DrawingRepository(
     suspend fun upsert(drawing : Drawing) {
         db.getDrawingDao().upsert(drawing)
     }
+
+    suspend fun update(drawing: Drawing) {
+        db.getDrawingDao().updateDrawing(drawing)
+    }
 }
